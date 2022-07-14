@@ -71,6 +71,7 @@ void deletar(Lista *lista, Funcionario *elemento){
         free(lista->last->next);
         lista->last->next = NULL;
     }
+    
 
 }
 
