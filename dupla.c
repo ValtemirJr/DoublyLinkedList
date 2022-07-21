@@ -24,6 +24,16 @@ int listaVazia(Funcionario *first){
     return 0;
 }
 
+Funcionario *procura(Lista *lista, int cod){
+    Funcionario *aux;
+    for(aux = lista->first;aux->next != NULL;aux = aux->next){
+        if(aux->cod == cod){
+            return aux;
+        }
+    }
+    return NULL;
+}
+
 void adicionaInicio(Lista *lista,Funcionario *novo){
     if(listaVazia(lista->first)){
         lista->first = novo;
@@ -34,16 +44,6 @@ void adicionaInicio(Lista *lista,Funcionario *novo){
     novo->next->prev = novo;
     lista->first = novo; 
     return;
-}
-
-Funcionario *procura(Lista *lista, int cod){
-    Funcionario *aux;
-    for(aux = lista->first;aux->next != NULL;aux = aux->next){
-        if(aux->cod == cod){
-            return aux;
-        }
-    }
-    return NULL;
 }
 
 void adicionaMeio(Lista *lista, Funcionario *elemento, Funcionario *novo){
@@ -60,21 +60,38 @@ void adicionaMeio(Lista *lista, Funcionario *elemento, Funcionario *novo){
 }
 
 
-void deletar(Lista *lista, Funcionario *elemento){
-    if(lista->first == elemento){
-        lista->first = elemento->next;
-        free(lista->first->prev);
-        lista->first->prev = NULL;
+void deletar(Lista *lista, int cod){
+    Funcionario *aux, *previous , *next;
+    if((listaVazia(lista->first)))
+        return;
+    for(aux = lista->first; aux->cod != cod; aux = aux->next);
+    if(aux == NULL)
+        return;   
+    if(lista->first == aux){
+        if(aux == lista->last){
+           lista->last = NULL;
+           lista->first = NULL;
+           
+        }else{
+            lista->first = lista->first->next;
+            lista->first->prev = NULL;
+        }
     }
-    else if(lista->last == elemento){
-        lista->last = elemento->prev;
-        free(lista->last->next);
+    else if(lista->last == aux){
+        lista->last = lista->last->prev;
         lista->last->next = NULL;
     }
-    
-
+    else{
+            previous = aux->prev;
+            next = aux->next;
+            previous->next = next;
+            // aux->prev->next = aux->next
+            next->prev = previous;
+            // aux->next->prev = aux->previous
+        
+    }
+    free(aux);
 }
-
 
 // Funcionario *adicionaFinal(Funcionario *first,Funcionario *novo){
 //     Funcionario *aux;
@@ -134,9 +151,13 @@ int main(){
     adicionaInicio(lista, criaFunc(2, "Weverton", 1001.0));
     adicionaInicio(lista, criaFunc(3, "Luiz", 1002.0));
     adicionaMeio(lista, procura(lista,2), criaFunc(4, "Jardel", 1003.0));
-    deletar(lista, procura(lista, 1));
+    deletar(lista, 1);deletar(lista, 2);deletar(lista, 3);deletar(lista, 4);
     printLista(lista->first);
-
+    printf("\n");
+    printListaContrario(lista->last);
+    adicionaInicio(lista, criaFunc(1, "João", 1000.0));
+    adicionaInicio(lista, criaFunc(2, "Weverton", 1001.0));
+    printListaContrario(lista->last);
 
    
     return 0;
